@@ -2,7 +2,7 @@ import streamlit as st
 from PIL import Image
 import torch
 import requests
-from transformers import LlamaForConditionalGeneration, AutoProcessor
+from transformers import AutoModelForCausalLM, AutoProcessor
 
 # Define model ID and processor
 model_id = "meta-llama/Llama-2-7b-chat-hf"
@@ -10,7 +10,7 @@ st.title("Image Captioning with Llama-3.2-11B-Vision-Instruct")
 
 # Display a spinner while loading the model
 with st.spinner('Loading model and processor...'):
-    model = LlamaForConditionalGeneration.from_pretrained(
+    model = AutoModelForCausalLM.from_pretrained(
         model_id,
         torch_dtype=torch.bfloat16,
         device_map="auto",
