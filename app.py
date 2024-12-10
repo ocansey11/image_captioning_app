@@ -2,18 +2,22 @@ import streamlit as st
 from PIL import Image
 import torch
 import requests
-from transformers import MllamaForConditionalGeneration, AutoProcessor
+from transformers import LlamaForConditionalGeneration, AutoProcessor
 
 # Define model ID and processor
-model_id = "meta-llama/Llama-3.2-11B-Vision-Instruct"
-model = MllamaForConditionalGeneration.from_pretrained(
-    model_id,
-    torch_dtype=torch.bfloat16,
-    device_map="auto",
-)
-processor = AutoProcessor.from_pretrained(model_id)
-
+model_id = "meta-llama/Llama-2-7b-chat-hf"
 st.title("Image Captioning with Llama-3.2-11B-Vision-Instruct")
+
+# Display a spinner while loading the model
+with st.spinner('Loading model and processor...'):
+    model = LlamaForConditionalGeneration.from_pretrained(
+        model_id,
+        torch_dtype=torch.bfloat16,
+        device_map="auto",
+    )
+    processor = AutoProcessor.from_pretrained(model_id)
+
+st.success('Model loaded successfully!')
 
 # File uploader
 uploaded_file = st.file_uploader("Upload an image", type=["jpg", "png", "jpeg"])
@@ -32,7 +36,7 @@ if uploaded_file is not None:
             {"type": "text", "text": "If I had to write a haiku for this one, it would be: "}
         ]}
     ]
-    input_text = processor.apply_chat_template(messages, add_generation_prompt=True)
+    input_text = processor.apply_chat_template(messages, add_generation_prompt=True)[0]
     
     inputs = processor(
         image,
